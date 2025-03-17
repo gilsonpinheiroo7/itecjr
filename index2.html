@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITEC JR - Soluções em Tecnologia</title>
+    <link rel="icon" type="Logo_ITEC-removebg-preview" href="WhatsApp_Image_2024-10-30_at_14.49.29-removebg-preview__1_-removebg-preview.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chat-button {
+            background-color: #2563eb;
+            color: white;
+            padding: 1rem;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.05);
+        }
+
+        .chat-popup {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .chat-popup.active {
+            display: block;
+        }
+
+        .chat-header {
+            background-color: #2563eb;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .bot-message {
+            background-color: #f3f4f6;
+            margin-right: auto;
+        }
+
+        .user-message {
+            background-color: #2563eb;
+            color: white;
+            margin-left: auto;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+        }
+
+        .chat-input button {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Cart Styles */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .cart-container {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+        }
+
+        .cart-container.active {
+            right: 0;
+        }
+
+        .cart-header {
+            padding: 1rem;
+            background-color: #2563eb;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-items {
+            padding: 1rem;
+            overflow-y: auto;
+            height: calc(100vh - 180px);
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-btn {
+            background-color: #e5e7eb;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cart-total {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 1001;
+            padding: 1rem;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .mobile-menu-items {
+            padding: 1rem 0;
+        }
+
+        .mobile-menu-items a {
+            display: block;
+            padding: 0.75rem 0;
+            font-size: 1.125rem;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* Mobile Cart Button */
+        .mobile-cart-button {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 998;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-cart-button {
+                display: flex;
+            }
+            
+            .desktop-cart {
+                display: none;
+            }
+
+            .cart-container {
+                width: 100%;
+                right: -100%;
+            }
+
+            .chat-widget {
+                bottom: 80px;
+            }
+        }
+
+        /* Enhanced Section Backgrounds */
+        .hero-pattern {
+            background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .hero-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .products-pattern {
+            background-image: url('https://images.unsplash.com/photo-1557683311-eac922347aa1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .products-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Additional Styles */
+        .testimonial-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 1rem;
+        }
+
+        .stats-section {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+
+        .tech-news-section {
+            background-color: #f8fafc;
+            padding: 4rem 0;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-date {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .news-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1f2937;
+        }
+
+        .news-description {
+            color: #4b5563;
+            margin-bottom: 1rem;
+        }
+
+        .read-more {
+            color: #2563eb;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+         /* New Tech Stack Section Styles */
+         .tech-stack-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+        }
+
+        .tech-stack-section {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .innovation-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            transition: transform 0.2s;
+        }
+
+        .innovation-card:hover {
+            transform: translateY(-5px);
+        }
+        .success-story-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .success-story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .produtos-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 50;
+            min-width: 200px;
+        }
+
+        .produtos-link:hover .produtos-dropdown {
+            display: block;
+        }
+
+        .produtos-dropdown a {
+            display: block;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .produtos-dropdown a:hover {
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-header">
+            <div class="flex items-center">
+                <img src="WhatsApp_Image_2024-10-30_at_14.49.29-removebg-preview__1_-removebg-preview.png" alt="ITEC" class="h-8 w-auto">
+                <span class="ml-2 text-xl font-bold">ITEC<span class="text-blue-600">JR</span></span>
+            </div>
+            <button onclick="toggleMobileMenu()" class="text-gray-500">✕</button>
+        </div>
+        <div class="mobile-menu-items">
+            <a href="#home" onclick="toggleMobileMenu()">Home</a>
+            <a href="#produtos" onclick="toggleMobileMenu()">Produtos</a>
+            <a href="teste.html" onclick="toggleMobileMenu()">Quem Somos</a>
+            <a href="https://wa.me/5581988010427" onclick="toggleMobileMenu()">Contato</a>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="WhatsApp_Image_2024-10-30_at_14.49.29-removebg-preview__1_-removebg-preview.png" alt="ITEC" class="h-8 w-auto">
+                    <span class="ml-2 text-xl font-bold">ITEC<span class="text-blue-600">JR</span></span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-700 hover:text-blue-600">Home</a>
+                    <div class="relative produtos-link">
+                        <a href="#produtos" class="text-gray-700 hover:text-blue-600 flex items-center">
+                            Produtos
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </a>
+                        <div class="produtos-dropdown">
+                            <a href="#produtos" onclick="scrollToProduct('Desenvolvimento Web')" class="text-gray-700 hover:text-blue-600">Desenvolvimento Web</a>
+                            <a href="#produtos" onclick="scrollToProduct('Consultoria em TI')" class="text-gray-700 hover:text-blue-600">Consultoria em TI</a>
+                            <a href="#produtos" onclick="scrollToProduct('Segurança Digital')" class="text-gray-700 hover:text-blue-600">Segurança Digital</a>
+                            <a href="#produtos" onclick="scrollToProduct('Aplicativo Mobile')" class="text-gray-700 hover:text-blue-600">Aplicativo Mobile</a>
+                            <a href="#produtos" onclick="scrollToProduct('Marketing Digital')" class="text-gray-700 hover:text-blue-600">Marketing Digital</a>
+                            <a href="#produtos" onclick="scrollToProduct('Cloud Computing')" class="text-gray-700 hover:text-blue-600">Cloud Computing</a>
+                        </div>
+                    </div>
+                    <a href="teste.html" class="text-gray-700 hover:text-blue-600">Quem Somos</a>
+                    <a href="https://wa.me/5581988010427" class="text-gray-700 hover:text-blue-600">Contato</a>
+                    <div class="cart-icon desktop-cart" onclick="toggleCart()">
+                        🛒
+                        <span class="cart-count">0</span>
+                    </div>
+                </div>
+                
+                <button class="md:hidden text-gray-500" onclick="toggleMobileMenu()">
+                    ☰
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Cart Button -->
+    <button class="mobile-cart-button" onclick="toggleCart()">
+        🛒
+        <span class="cart-count">0</span>
+    </button>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-pattern">
+        <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 text-white">
+                        Transforme seu Negócio com Tecnologia
+                    </h1>
+                    <p class="text-lg mb-8 text-blue-100">
+                        Somos uma empresa júnior especializada em soluções tecnológicas inovadoras.
+                        Desenvolvemos seu projeto com excelência e compromisso.
+                    </p>
+                    <button class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors" id="lvprodutos">
+                        Conheça Nossos Serviços
+                    </button>
+                </div>
+                <div class="hidden md:block">
+                    <img 
+                        src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Technology"
+                        class="rounded-lg shadow-xl"
+                    >
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <h3 class="text-4xl font-bold mb-2">10+</h3>
+                    <p class="text-blue-100">Projetos Entregues</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-bold mb-2">10+</h3>
+                    <p class="text-blue-100">Clientes Satisfeitos</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-bold mb-2">1+</h3>
+                    <p class="text-blue-100">Ano de Experiência</p>
+                </div>
+                <div>
+                    <h3 class="text-4xl font-bold mb-2">24/7</h3>
+                    <p class="text-blue-100">Suporte Técnico</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Services Section -->
+    <section id="produtos" class="products-pattern py-20">
+        <div class="max-w-7xl mx-auto px-4 relative">
+            <h2 class="text-3xl font-bold text-center mb-12">Nossos Serviços</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Desenvolvimento Web" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Desenvolvimento Web</h3>
+                        <div class="flex items-center mb-4">
+                            <span class="text-yellow-400">★★★★★</span>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600 mb-4">R$50,00</p>
+                        <button onclick="addToCart('Desenvolvimento Web', 50.00, 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')" 
+                                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Consultoria em TI" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Consultoria em TI</h3>
+                        <div class="flex items-center mb-4">
+                            <span class="text-yellow-400">★★★★★</span>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600 mb-4">R$50,00</p>
+                        <button onclick="addToCart('Consultoria em TI',50.00, 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"
+                                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Segurança Digital" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Segurança Digital</h3>
+                        <div class="flex items-center mb-4">
+                            <span class="text-yellow-400">★★★★★</span>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600 mb-4">R$50,00</p>
+                        <button onclick="addToCart('Segurança Digital', 50.00, 'https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"
+                                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Aplicativo Mobile" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Aplicativo Mobile</h3>
+                        <div class="flex items-center mb-4">
+                            <span class="text-yellow-400">★★★★★</span>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600 mb-4">R$50,00</p>
+                        <button onclick="addToCart('Aplicativo Mobile', 50.00, 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"
+                                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Marketing Digital" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Marketing Digital</h3>
+                        <div class="flex items-center mb-4">
+                            <span class="text-yellow-400">★★★★★</span>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600 mb-4">R$50,00</p>
+                        <button onclick="addToCart('Marketing Digital',50.00, 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"
+                                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                         alt="Cloud Computing" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">Cloud Computing</h3>
+                        <div class="flex items-center mb-4">
+                            <span class="text-yellow-400">★★★★★</span>
+                        </div>
+                        <p class="text-2xl font-bold text-blue-600 mb-4">R$50,00</p>
+                        <button onclick="addToCart('Cloud Computing',50.00, 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80')"
+                                class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                            Adicionar ao Carrinho
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="tech-stack" class="tech-stack-section">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Nossa Stack Tecnológica</h2>
+                <p class="text-blue-100">Utilizamos as tecnologias mais modernas do mercado</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+                <div class="flex flex-col items-center">
+                    <svg class="tech-stack-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 18L22 12L16 6"></path>
+                        <path d="M8 6L2 12L8 18"></path>
+                    </svg>
+                    <h3 class="text-lg font-semibold">Frontend</h3>
+                    <p class="text-sm text-blue-100 text-center mt-2">Html, CSS, JavaScript</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <svg class="tech-stack-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 7L4 4L20 4L20 7"></path>
+                        <path d="M9 20L15 20"></path>
+                        <path d="M12 4L12 20"></path>
+                    </svg>
+                    <h3 class="text-lg font-semibold">Backend</h3>
+                    <p class="text-sm text-blue-100 text-center mt-2">Node.js, Python, Java</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <svg class="tech-stack-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="8" rx="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2"></rect>
+                    </svg>
+                    <h3 class="text-lg font-semibold">Banco de Dados</h3>
+                    <p class="text-sm text-blue-100 text-center mt-2">MySQL, MongoDB</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <svg class="tech-stack-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M2 12L22 12"></path>
+                        <path d="M12 2C14.5013 4.73835 15.9228 8.29203 16 12C15.9228 15.708 14.5013 19.2616 12 22C9.49872 19.2616 8.07725 15.708 8 12C8.07725 8.29203 9.49872 4.73835 12 2Z"></path>
+                    </svg>
+                    <h3 class="text-lg font-semibold">Cloud</h3>
+                    <p class="text-sm text-blue-100 text-center mt-2">AWS, Azure, GCP</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <svg class="tech-stack-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="5" y="2" width="14" height="20" rx="2"></rect>
+                        <path d="M12 18H12.01"></path>
+                    </svg>
+                    <h3 class="text-lg font-semibold">Mobile</h3>
+                    <p class="text-sm text-blue-100 text-center mt-2">React Native, Flutter</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Innovation Lab Section -->
+    <section id="innovation" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Laboratório de Inovação</h2>
+                <p class="text-gray-600">Explorando as tecnologias do futuro</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="innovation-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                        <path d="M2 17L12 22L22 17"></path>
+                        <path d="M2 12L12 17L22 12"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Inteligência Artificial</h3>
+                    <p class="text-gray-600">Desenvolvimento de soluções com machine learning e processamento de linguagem natural.</p>
+                </div>
+                <div class="innovation-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22C16.4183 22 20 18.4183 20 14C20 9.58172 16.4183 6 12 6C7.58172 6 4 9.58172 4 14C4 18.4183 7.58172 22 12 22Z"></path>
+                        <path d="M12 2V6"></path>
+                        <path d="M12 14L16 10"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Blockchain</h3>
+                    <p class="text-gray-600">Implementação de contratos inteligentes e soluções descentralizadas.</p>
+                </div>
+                <div class="innovation-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12H19"></path>
+                        <path d="M12 5L19 12L12 19"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">IoT</h3>
+                    <p class="text-gray-600">Desenvolvimento de soluções para Internet das Coisas e automação.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech News Section -->
+    <section class="tech-news-section">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Novidades em Tecnologia</h2>
+                <p class="text-gray-600">Fique por dentro das últimas tendências e inovações do mundo tech</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Inteligência Artificial" class="news-image">
+                    <div class="news-content">
+                        <div class="news-date">15 Mar 2024</div>
+                        <h3 class="news-title">O Impacto da IA no Desenvolvimento de Software</h3>
+                        <p class="news-description">Como a Inteligência Artificial está revolucionando a forma como desenvolvemos software e automatizamos processos.</p>
+                        <a href="#" class="read-more">Ler mais →</a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Cybersegurança" class="news-image">
+                    <div class="news-content">
+                        <div class="news-date">14 Mar 2024</div>
+                        <h3 class="news-title">Tendências em Cybersegurança para 2024</h3>
+                        <p class="news-description">As principais ameaças e soluções de segurança digital que toda empresa precisa conhecer.</p>
+                        <a href="#" class="read-more">Ler mais →</a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Cloud Computing" class="news-image">
+                    <div class="news-content">
+                        <div class="news-date">13 Mar 2024</div>
+                        <h3 class="news-title">Cloud Computing e Transformação Digital</h3>
+                        <p class="news-description">Como a computação em nuvem está impulsionando a transformação digital das empresas.</p>
+                        <a href="#" class="read-more">Ler mais →</a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="5G Technology" class="news-image">
+                    <div class="news-content">
+                        <div class="news-date">12 Mar 2024</div>
+                        <h3 class="news-title">5G e o Futuro da Conectividade</h3>
+                        <p class="news-description">O impacto da tecnologia 5G nas empresas e no desenvolvimento de aplicações móveis.</p>
+                        <a href="#" class="read-more">Ler mais →</a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Blockchain" class="news-image">
+                    <div class="news-content">
+                        <div class="news-date">11 Mar 2024</div>
+                        <h3 class="news-title">Blockchain na Indústria 4.0</h3>
+                        <p class="news-description">Aplicações práticas da tecnologia blockchain na indústria e manufatura.</p>
+                        <a href="#" class="read-more">Ler mais →</a>
+                    </div>
+                </article>
+
+                <article class="news-card">
+                    <img src="https://images.unsplash.com/photo-1535378917042-10a22c95931a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="IoT" class="news-image">
+                    <div class="news-content">
+                        <div class="news-date">10 Mar 2024</div>
+                        <h3 class="news-title">IoT e Cidades Inteligentes</h3>
+                        <p class="news-description">Como a Internet das Coisas está transformando o planejamento urbano e a gestão de recursos.</p>
+                        <a href="#" class="read-more">Ler mais →</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="success-stories" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4">Casos de Sucesso</h2>
+                <p class="text-gray-600">Projetos que transformaram negócios</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="success-story-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999"></path>
+                        <path d="M22 4L12 14.01L9 11.01"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">E-commerce Tech Store</h3>
+                    <p class="text-gray-600 mb-4">Aumento de 150% nas vendas após implementação de nova plataforma.</p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>Duração: 3 meses</span>
+                        <span>ROI: 300%</span>
+                    </div>
+                </div>
+                <div class="success-story-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"></path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">Sistema de Atendimento</h3>
+                    <p class="text-gray-600 mb-4">Redução de 60% no tempo de resposta ao cliente.</p>
+                    <div class="flex items-center justify-between text-sm text-gray-500">
+                        <span>Duração: 2 meses</span>
+                        <span>ROI: 250%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+     <!-- Testimonials Section -->
+     <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">O que nossos clientes dizem</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card">
+                    <p class="text-gray-600 mb-4">"A ITEC JR transformou completamente nosso negócio online. O novo site é incrível e as vendas aumentaram significativamente!"</p>
+                    <p class="font-semibold">Maria Silva</p>
+                    <p class="text-sm text-gray-500"></p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="text-gray-600 mb-4">"A consultoria em TI nos ajudou a otimizar processos e reduzir custos. Equipe muito profissional!"</p>
+                    <p class="font-semibold">João Santos</p>
+                    <p class="text-sm text-gray-500"></p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="text-gray-600 mb-4">"Excelente trabalho na implementação do sistema de segurança. Nos sentimos muito mais protegidos agora!"</p>
+                    <p class="font-semibold">Ana Costa</p>
+                    <p class="text-sm text-gray-500"></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget">
+        <button class="chat-button" onclick="toggleChat()">
+            💬
+        </button>
+        <div class="chat-popup" id="chat-popup">
+            <div class="chat-header">
+                <h3>ITEC Support</h3>
+                <span onclick="toggleChat()" style="cursor: pointer;">✕</span>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot-message">
+                    Olá! Sou o assistente virtual da ITEC. Como posso ajudar você hoje?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input-field" placeholder="Digite sua mensagem..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Container -->
+    <div class="overlay" onclick="toggleCart()"></div>
+    <div class="cart-container" id="cart-container">
+        <div class="cart-header">
+            <h3>Seu Carrinho</h3>
+            <span onclick="toggleCart()" style="cursor: pointer;">✕</span>
+        </div>
+        <div class="cart-items" id="cart-items"></div>
+        <div class="cart-total">
+            <h3>Total: R$ <span id="cart-total-amount">0.00</span></h3>
+            <button onclick="finalizarCompra()" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors">
+                Finalizar no WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ITEC JR</h3>
+                    <p class="text-gray-400">
+                        Transformando ideias em soluções tecnológicas
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contato</h3>
+                    <p class="text-gray-400">
+                        Email: Desenvolvimentoitec@gmail.com<br>
+                        Telefone: (81) 98801-0427
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Redes Sociais</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">LinkedIn</a>
+                        <a href="https://www.instagram.com/itec.jr" class="text-gray-400 hover:text-white">Instagram</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 ITEC JR. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+        function scrollToProduct(productName) {
+            const productsSection = document.getElementById('produtos');
+            productsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            const productCards = document.querySelectorAll('.bg-white.rounded-lg.shadow-lg');
+            const productCard = Array.from(productCards).find(card => 
+                card.querySelector('h3').textContent === productName
+            );
+            
+            if (productCard) {
+                productCard.style.transform = 'scale(1.05)';
+                productCard.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                productCard.style.transition = 'all 0.3s ease';
+                
+                setTimeout(() => {
+                    productCard.style.transform = '';
+                    productCard.style.boxShadow = '';
+                }, 2000);
+            }
+        }
+        // Cart functionality
+        let cartItems = [];
+        const cartContainer = document.querySelector('.cart-container');
+        const overlay = document.querySelector('.overlay');
+        const cartItemsContainer = document.querySelector('.cart-items');
+        const cartCount = document.querySelector('.cart-count');
+
+        function toggleCart() {
+            cartContainer.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.remove('active');
+        }
+
+        function addToCart(name, price, image) {
+            const existingItem = cartItems.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cartItems.push({
+                    name,
+                    price,
+                    image,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+        }
+
+        function updateQuantity(index, delta) {
+            cartItems[index].quantity += delta;
+            
+            if (cartItems[index].quantity <= 0) {
+                cartItems.splice(index, 1);
+            }
+            
+            updateCart();
+        }
+
+        function updateCart() {
+            // Update cart count
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCounts = document.querySelectorAll('.cart-count');
+            cartCounts.forEach(count => {
+                count.textContent = totalItems;
+            });
+
+            // Update cart items display
+            cartItemsContainer.innerHTML = cartItems.map((item, index) => `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <h4>${item.name}</h4>
+                        <p>R$ ${item.price.toFixed(2)}</p>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update total
+            const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cart-total-amount').textContent = total.toFixed(2);
+        }
+
+        function finalizarCompra() {
+            if (cartItems.length === 0) {
+                alert('Seu carrinho está vazio!');
+                return;
+            }
+
+            const message = encodeURIComponent(
+                `Olá! Gostaria de comprar:\n\n${cartItems
+                    .map(item => `${item.quantity}x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}`)
+                    .join('\n')}\n\nTotal: R$ ${cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}`
+            );
+            
+            window.open(`https://wa.me/5581988010427?text=${message}`, '_blank');
+        }
+
+        // Enhanced AI Chat functionality
+        const chatPopup = document.getElementById('chat-popup');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input-field');
+
+        // Enhanced AI knowledge base with more specific responses
+        const aiKnowledge = {
+            services: {
+                web: {
+                    keywords: ['site', 'website', 'web', 'página', 'desenvolvimento', 'aplicativo', 'app', 'sistema'],
+                    responses: [
+                        "Nosso serviço de desenvolvimento web é completo! Criamos sites responsivos e modernos a partir de R$ 100,00. Posso te mostrar alguns exemplos?",
+                        "Para desenvolvimento web, trabalhamos com as tecnologias mais modernas como React, Vue.js e Node.js. Qual é sua necessidade específica?",
+                        "Desenvolvemos sites personalizados, e-commerce, sistemas web e aplicativos. Qual tipo de projeto você precisa?",
+                        "Nossa equipe de desenvolvimento web pode criar uma solução personalizada para seu negócio. Quer conhecer nosso portfólio?"
+                    ]
+                },
+                consulting: {
+                    keywords: ['consultoria', 'ajuda', 'suporte', 'análise', 'processos', 'melhoria'],
+                    responses: [
+                        "Nossa consultoria em TI começa a partir de R$ 1.500,00. Fazemos uma análise completa da sua infraestrutura e processos.",
+                        "Oferecemos consultoria especializada em transformação digital, otimização de processos e implementação de novas tecnologias.",
+                        "Com nossa consultoria, você terá acesso a especialistas em diversas áreas da tecnologia. Podemos agendar uma reunião?",
+                        "Ajudamos empresas a melhorar seus processos tecnológicos e reduzir custos. Quer saber como podemos ajudar seu negócio?"
+                    ]
+                },
+                security: {
+                    keywords: ['segurança', 'proteção', 'hacker', 'vulnerabilidade', 'dados', 'privacidade'],
+                    responses: [
+                        "Nossa equipe de segurança digital oferece proteção completa a partir de R$ 50,00. Inclui análise de vulnerabilidades e implementação de soluções.",
+                        "Realizamos testes de penetração, análise de vulnerabilidades e implementamos políticas de segurança adequadas ao seu negócio.",
+                        "Protegemos seu negócio contra ameaças cibernéticas com monitoramento 24/7 e resposta a incidentes.",
+                        "Oferecemos soluções de segurança personalizadas, incluindo proteção de dados, backup e recuperação de desastres."
+                    ]
+                },
+                pricing: {
+                    keywords: ['preço', 'valor', 'custo', 'orçamento', 'investimento'],
+                    responses: [
+                        "Nossos preços variam de acordo com o projeto. Desenvolvimento web a partir de R$ 50,00, consultoria a partir de R$ 50,00 e segurança digital a partir de R$ 50,00.",
+                        "Podemos criar um orçamento personalizado baseado nas suas necessidades específicas. Qual serviço te interessa?",
+                        "Oferecemos planos flexíveis e condições de pagamento facilitadas. Quer que eu te explique mais sobre os valores?",
+                        "Cada projeto é único e os preços podem variar. Podemos agendar uma reunião para discutir seu projeto em detalhes?"
+                    ]
+                }
+            },
+            general: [
+                "Como posso ajudar você hoje? Temos diversos serviços em tecnologia!",
+                "Estou aqui para ajudar! Quer conhecer nossos serviços?",
+                "Que tal marcarmos uma reunião para discutir seu projeto em detalhes?",
+                "Posso te apresentar alguns casos de sucesso similares ao seu projeto!",
+                "Nossa equipe está pronta para ajudar com sua necessidade. Em qual área posso te auxiliar?"
+            ]
+        };
+
+        function toggleChat() {
+            chatPopup.classList.toggle('active');
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getAIResponse(message) {
+            const lowercaseMessage = message.toLowerCase();
+            
+            // Check for greetings
+            if (lowercaseMessage.match(/^(oi|olá|boa|iae|opa)/)) {
+                return "Olá! Como posso ajudar você hoje? Temos serviços de desenvolvimento web, consultoria em TI e segurança digital!";
+            }
+            
+            // Check each service category
+            for (const [category, data] of Object.entries(aiKnowledge.services)) {
+                if (data.keywords.some(keyword => lowercaseMessage.includes(keyword))) {
+                    return data.responses[Math.floor(Math.random() * data.responses.length)];
+                }
+            }
+            
+            // Check for specific questions
+            if (lowercaseMessage.includes('whatsapp') || lowercaseMessage.includes('contato')) {
+                return "Você pode entrar em contato conosco pelo WhatsApp:(81) 98801-0427 ou email: Desenvolvimentoitec@gmail.com";
+            }
+             // Check for specific questions
+             if (lowercaseMessage.includes('gilson') || lowercaseMessage.includes('clodoaldo')) {
+                return "o melhor desenvolvedor do brasil";
+            }
+            
+            if (lowercaseMessage.includes('prazo') || lowercaseMessage.includes('tempo')) {
+                return "O prazo varia de acordo com o projeto. Podemos conversar sobre suas necessidades específicas para dar uma estimativa mais precisa.";
+            }
+            
+            // If no specific match, return general response
+            return aiKnowledge.general[Math.floor(Math.random() * aiKnowledge.general.length)];
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                addMessage(message, true);
+                chatInput.value = '';
+                
+                // Simulate AI thinking with typing indicator
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'message bot-message';
+                typingIndicator.textContent = '...';
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate AI response time
+                setTimeout(() => {
+                    chatMessages.removeChild(typingIndicator);
+                    const aiResponse = getAIResponse(message);
+                    addMessage(aiResponse);
+                }, 1000);
+            }
+        }
+
+        // Mobile menu functionality
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuButton = document.querySelector('.md\\:hidden');
+            
+            if (!mobileMenu.contains(event.target) && !menuButton.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        document.getElementById("lvprodutos").addEventListener("click", function () {
+        document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
+    });
+    </script>
+</body>
+</html>

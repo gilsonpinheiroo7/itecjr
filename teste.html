@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quem Somos - ITEC JR</title>
+    <link rel="icon" type="itec" href="WhatsApp_Image_2024-10-30_at_14.49.29-removebg-preview__1_-removebg-preview.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 1001;
+            padding: 1rem;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .mobile-menu-items {
+            padding: 1rem 0;
+        }
+
+        .mobile-menu-items a {
+            display: block;
+            padding: 0.75rem 0;
+            font-size: 1.125rem;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        /* Mobile Cart Button */
+        .mobile-cart-button {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2563eb;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 998;
+        }
+        .produtos-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 50;
+            min-width: 200px;
+        }
+
+        .produtos-link:hover .produtos-dropdown {
+            display: block;
+        }
+
+        .produtos-dropdown a {
+            display: block;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .produtos-dropdown a:hover {
+            background-color: #f3f4f6;
+        }
+
+        .team-member-card {
+            transition: all 0.3s ease;
+        }
+
+        .team-member-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .value-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #2563eb;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: -4px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2563eb;
+        }
+
+        .partner-logo {
+            filter: grayscale(100%);
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .partner-logo:hover {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-header">
+            <div class="flex items-center">
+                <img src="WhatsApp_Image_2024-10-30_at_14.49.29-removebg-preview__1_-removebg-preview.png" alt="ITEC" class="h-8 w-auto">
+                <span class="ml-2 text-xl font-bold">ITEC<span class="text-blue-600">JR</span></span>
+            </div>
+            <button onclick="toggleMobileMenu()" class="text-gray-500">✕</button>
+        </div>
+        <div class="mobile-menu-items">
+            <a href="#home" onclick="toggleMobileMenu()">Home</a>
+            <a href="index2.html" onclick="toggleMobileMenu()">Produtos</a>
+            <a href="teste.html" onclick="toggleMobileMenu()">Quem Somos</a>
+            <a href="https://wa.me/5581988010427" onclick="toggleMobileMenu()">Contato</a>
+        </div>
+    </div>
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img src="WhatsApp_Image_2024-10-30_at_14.49.29-removebg-preview__1_-removebg-preview.png" alt="ITEC" class="h-8 w-auto">
+                    <span class="ml-2 text-xl font-bold">ITEC<span class="text-blue-600">JR</span></span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index2.html" class="text-gray-700 hover:text-blue-600">Home</a>
+                    <div class="relative produtos-link">
+                        <a href="index2.html#produtos" class="text-gray-700 hover:text-blue-600 flex items-center">
+                            Produtos
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </a>
+                        <div class="produtos-dropdown">
+                            <a href="index2.html#produtos" class="text-gray-700 hover:text-blue-600">Desenvolvimento Web</a>
+                            <a href="index2.html#produtos" class="text-gray-700 hover:text-blue-600">Consultoria em TI</a>
+                            <a href="index2.html#produtos" class="text-gray-700 hover:text-blue-600">Segurança Digital</a>
+                            <a href="index2.html#produtos" class="text-gray-700 hover:text-blue-600">Aplicativo Mobile</a>
+                            <a href="index2.html#produtos" class="text-gray-700 hover:text-blue-600">Marketing Digital</a>
+                            <a href="index2.html#produtos" class="text-gray-700 hover:text-blue-600">Cloud Computing</a>
+                        </div>
+                    </div>
+                    <a href="teste.html" class="text-blue-600 font-semibold">Quem Somos</a>
+                    <a href="https://wa.me/5581988010427" class="text-gray-700 hover:text-blue-600">Contato</a>
+                </div>
+                
+                <button class="md:hidden text-gray-500" onclick="toggleMobileMenu()">
+                    ☰
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Nossa História</h1>
+                <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                    Somos uma empresa júnior de tecnologia comprometida em transformar ideias em soluções inovadoras,
+                    impulsionando o sucesso dos nossos clientes através da excelência em desenvolvimento e consultoria.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission, Vision, Values Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="value-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z"></path>
+                        <path d="M2 17L12 22L22 17"></path>
+                        <path d="M2 12L12 17L22 12"></path>
+                    </svg>
+                    <h3 class="text-xl font-bold mb-4">Missão</h3>
+                    <p class="text-gray-600">
+                        Desenvolver soluções tecnológicas inovadoras que impulsionem o crescimento e sucesso dos nossos clientes,
+                        enquanto proporcionamos experiência prática aos nossos membros.
+                    </p>
+                </div>
+                <div class="value-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16L12 12"></path>
+                        <path d="M12 8L12 8.01"></path>
+                    </svg>
+                    <h3 class="text-xl font-bold mb-4">Visão</h3>
+                    <p class="text-gray-600">
+                        Ser reconhecida como referência em desenvolvimento de soluções tecnológicas inovadoras,
+                        formando profissionais de excelência e gerando impacto positivo na sociedade.
+                    </p>
+                </div>
+                <div class="value-card">
+                    <svg class="w-12 h-12 text-blue-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.709 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4881 2.02168 11.3363C2.16356 9.18455 2.99721 7.13631 4.39828 5.49706C5.79935 3.85781 7.69279 2.71537 9.79619 2.24013C11.8996 1.7649 14.1003 1.98232 16.07 2.85999"></path>
+                        <path d="M22 4L12 14.01L9 11.01"></path>
+                    </svg>
+                    <h3 class="text-xl font-bold mb-4">Valores</h3>
+                    <p class="text-gray-600">
+                         Inovação e Criatividade<br>
+                         Excelência Técnica<br>
+                         Compromisso com Resultados<br>
+                         Desenvolvimento Profissional<br>
+                         Responsabilidade Social
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Nossa Trajetória</h2>
+            <div class="max-w-3xl mx-auto">
+                <div class="timeline-item">
+                    <h3 class="text-xl font-bold mb-2">Agosto 2024 - Fundação</h3>
+                    <p class="text-gray-600">Início das atividades com foco em desenvolvimento web e consultoria básica em TI.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-bold mb-2">Setembro 2024 - Primeiro Projeto</h3>
+                    <p class="text-gray-600">Entrega do primeiro projeto de desenvolvimento web para um cliente local.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-bold mb-2">Outubro 2024 - Expansão</h3>
+                    <p class="text-gray-600">Ampliação dos serviços incluindo desenvolvimento mobile e marketing digital.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-bold mb-2">Novembro 2024 - Reconhecimento</h3>
+                    <p class="text-gray-600">Premiação como empresa júnior destaque em inovação tecnológica.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-bold mb-2">Janeiro 2025 - Crescimento</h3>
+                    <p class="text-gray-600">Alcance de 20+ projetos entregues e expansão da equipe.</p>
+                </div>
+                <div class="timeline-item">
+                    <h3 class="text-xl font-bold mb-2">Março 2025 - Presente</h3>
+                    <p class="text-gray-600">Consolidação no mercado com foco em soluções tecnológicas inovadoras.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- Team Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Nossa Equipe</h2>
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="team-member-card text-center">
+                    <img src="WhatsApp Image 2025-03-17 at 16.59.05.jpeg" 
+                         alt="Diretor de Projetos" 
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-semibold">Anderson</h3>
+                    <p class="text-gray-600">Diretor Geral</p>
+                </div>
+                <div class="team-member-card text-center">
+                    <img src="WhatsApp_Image_2025-03-17_at_16.54.58__1_-removebg-preview.png" 
+                         alt="Diretora de Marketing" 
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-semibold">Matheus</h3>
+                    <p class="text-gray-600">Diretor de Marketing</p>
+                </div>
+                <div class="team-member-card text-center">
+                    <img src="WhatsApp_Image_2025-03-17_at_16.54.58-removebg-preview.png" 
+                         alt="Diretor Técnico" 
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-semibold">Wanderson</h3>
+                    <p class="text-gray-600">Diretor Desenvolvimento</p>
+                </div>
+                <div class="team-member-card text-center">
+                    <img src="WhatsApp Image 2025-03-17 at 16.59.06.jpeg" 
+                         alt="Diretora Financeira" 
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-semibold">Karla</h3>
+                    <p class="text-gray-600">Diretora Governançia</p>
+                </div>
+                <div class="team-member-card text-center">
+                    <img src="WhatsApp_Image_2025-03-17_at_16.56.12-removebg-preview.png" 
+                         alt="Diretora de Marketing" 
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-semibold">Guilherme Ruan</h3>
+                    <p class="text-gray-600">Diretor de Comercial</p>
+                </div>
+                <div class="team-member-card text-center">
+                    <img src="WhatsApp_Image_2025-03-17_at_17.16.46-removebg-preview.png" 
+                         alt="Diretora de Marketing" 
+                         class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                    <h3 class="text-xl font-semibold">Pedro</h3>
+                    <p class="text-gray-600">Diretor de infraestrutura</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">ITEC JR</h3>
+                    <p class="text-gray-400">
+                        Transformando ideias em soluções tecnológicas
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contato</h3>
+                    <p class="text-gray-400">
+                        Email: Desenvolvimentoitec@gmail.com<br>
+                        Telefone: (81) 98801-0427
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Redes Sociais</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">LinkedIn</a>
+                        <a href="https://www.instagram.com/itec.jr" class="text-gray-400 hover:text-white">Instagram</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 ITEC JR. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+            document.getElementById('mobile-menu').classList.remove('active');
+        }
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuButton = document.querySelector('.md\\:hidden');
+            
+            if (!mobileMenu.contains(event.target) && !menuButton.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
